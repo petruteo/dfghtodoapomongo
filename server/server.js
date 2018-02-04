@@ -18,7 +18,7 @@ var app = express();
 app.use( bodyParser.json() );
 
 app.post( '/todos', ( req, res ) => {
-	console.log( typeof ( req.body.text ) );
+	console.log( req.body.text );
 	var todo = new Todo( {
 		text: req.body.text
 	} );
@@ -31,7 +31,12 @@ app.post( '/todos', ( req, res ) => {
 		} );
 } );
 
+app.get( '/todos', )
 
 app.listen( '3000', () => {
 	console.log( 'listen on 3000' );
 } );
+
+module.exports = {
+	app
+};
