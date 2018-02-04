@@ -1,11 +1,13 @@
 var express = require( 'express' );
 var bodyParser = require( 'body-parser' );
+const {
+	ObjectID
+} = require( 'mongodb' );
 
 
 var {
 	mongoose
 } = require( './db/mongoose.js' );
-
 var {
 	Todo
 } = require( './models/todo.js' );
@@ -14,6 +16,7 @@ var {
 } = require( './models/user.js' );
 
 var app = express();
+var port = process.env.PORT || 3000;
 
 app.use( bodyParser.json() );
 
@@ -31,10 +34,43 @@ app.post( '/todos', ( req, res ) => {
 		} );
 } );
 
-app.get( '/todos', )
+// app.get( '/todos', ( req, res ) => {
+// 	//handle err
+// 	// insert in db
+// } );
 
-app.listen( '3000', () => {
-	console.log( 'listen on 3000' );
+app.get( '/todos/:id', ( req, res ) => {
+	var id = req.params.id;
+	if ( !ObjectID.isValid( id ) ) {
+		console.log( 'todo ID not valid, try again' );
+		res.status( 404 )
+			.send();
+	} else {
+		Todo.findById( id )
+			.then( ( todo ) => {
+
+					if ( todo === null ) {
+						console.log( 'todo inexistent' );
+						res.status( 404 )
+							.send();
+					} else {
+						res.send(
+							todo
+						);
+					};
+				},
+				( e ) => {
+					console.log( 'TODO NOT NOT FOUND found, try again' );
+					res.status( 404 )
+						.send();
+				} );
+	};
+
+
+} );
+
+app.listen( 'port', () => {
+	console.log( `listen on ${port}` );
 } );
 
 module.exports = {
