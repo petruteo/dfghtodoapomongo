@@ -20,6 +20,7 @@ var port = process.env.PORT || 3000;
 
 app.use( bodyParser.json() );
 
+//******************************
 app.post( '/todos', ( req, res ) => {
 	console.log( req.body.text );
 	var todo = new Todo( {
@@ -34,10 +35,7 @@ app.post( '/todos', ( req, res ) => {
 		} );
 } );
 
-// app.get( '/todos', ( req, res ) => {
-// 	//handle err
-// 	// insert in db
-// } );
+//******************************
 app.get( '/todos/', ( req, res ) => {
 	console.log( 'print all as no ID was provided' );
 	Todo.find( {} )
@@ -48,10 +46,9 @@ app.get( '/todos/', ( req, res ) => {
 			res.status( 404 )
 				.send();
 		} )
-
-
 } );
 
+//******************************
 app.get( '/todos/:id', ( req, res ) => {
 	var id = req.params.id;
 	console.log( "asta e id-ul", id );
@@ -84,9 +81,46 @@ app.get( '/todos/:id', ( req, res ) => {
 						.send();
 				} );
 	};
-
-
 } );
+
+//******************************
+app.delete( '/todos/:id', ( req, res ) => {
+	//validate the ID
+	var id = req.params.id;
+
+	// console.log( 'id-ul este', obj );
+
+	if ( !ObjectID.isValid( id ) ) {
+		console.log( 'id not valid', id );
+		return res.status( 404 )
+			.send();
+	};
+
+	//check if id in db
+	Todo.findByIdAndRemove( id )
+		.then( ( item ) => {
+			if ( item !== null ) {
+				console.log( 'item deleted: ', item );
+				res.send( item );
+			} else {
+				console.log( 'object with ID not found, try again' );
+				res.status( 404 )
+					.send();
+			};
+
+
+		}, ( e ) => {
+			console.log( 'object with ID not found, try again' );
+			res.status( 404 )
+				.send();
+		} );
+
+}, ( e ) => {
+	'content was not deteled by error:',
+	e
+} );
+
+//******************************
 
 app.listen( port, () => {
 	console.log( `listen on ${port}` );
