@@ -38,9 +38,28 @@ app.post( '/todos', ( req, res ) => {
 // 	//handle err
 // 	// insert in db
 // } );
+app.get( '/todos/', ( req, res ) => {
+	console.log( 'print all as no ID was provided' );
+	Todo.find( {} )
+		.then( ( all ) => {
+			res.send( all );
+		}, ( e ) => {
+			console.log( 'db error' );
+			res.status( 404 )
+				.send();
+		} )
+
+
+} );
 
 app.get( '/todos/:id', ( req, res ) => {
 	var id = req.params.id;
+	console.log( "asta e id-ul", id );
+	if ( id === null ) {
+		res.send( {
+			"all": "imediat"
+		} );
+	};
 	if ( !ObjectID.isValid( id ) ) {
 		console.log( 'todo ID not valid, try again' );
 		res.status( 404 )
