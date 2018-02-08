@@ -18,6 +18,10 @@ var {
 	User
 } = require( './models/user.js' );
 
+var {
+	authenticate
+} = require( './middleware/authenticate.js' );
+
 var app = express();
 var port = process.env.PORT;
 
@@ -185,11 +189,17 @@ app.post( '/users', ( req, res ) => {
 } );
 
 
+//******************************
 
+
+
+
+app.get( '/users/me', authenticate, ( req, res ) => {
+	res.send( req.user );
+} );
 
 
 //******************************
-
 
 app.listen( port, () => {
 	console.log( `listen on ${port}` );
