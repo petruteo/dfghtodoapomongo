@@ -174,6 +174,7 @@ app.post( '/users', ( req, res ) => {
 
 	user.save()
 		.then( ( user ) => {
+			console.log( 'user salvat' );
 			return user.generateAuthToken();
 		} )
 		.then( ( token ) => {
