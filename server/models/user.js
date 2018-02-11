@@ -107,6 +107,38 @@ UserSchema.statics.findByToken = function ( token ) {
 
 };
 
+UserSchema.statics.findByCredentials = function ( email, password ) {
+	var user = this;
+
+
+
+	return User.findOne( {
+			email
+		} )
+		.then( ( user ) => {
+
+			// console.log( "+++++++++", user );
+
+			// verifies if the user was found  based on email address
+			if ( !user ) {
+				return Promise.reject();
+			};
+			// returns promises based on password hash match
+			return new Promise( ( resolve, reject ) => {
+				console.log( 'compara pass' );
+				bcrypt.compare( password, user.password, ( err, res ) => {
+					if ( res ) {
+						console.log( 'parola e ok, intoarce promise rezolvata - XX' );
+						resolve( user );
+					} else {
+						console.log( 'parola NOT ok, intoarce promise rejectata' );
+						reject();
+					}
+				} );
+			} )
+		} );
+
+};
 
 var User = mongoose.model( 'User', UserSchema );
 

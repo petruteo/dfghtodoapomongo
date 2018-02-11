@@ -6,6 +6,7 @@ const bodyParser = require( 'body-parser' );
 const {
 	ObjectID
 } = require( 'mongodb' );
+const bcrypt = require( 'bcryptjs' );
 
 
 var {
@@ -198,6 +199,39 @@ app.post( '/users', ( req, res ) => {
 app.get( '/users/me', authenticate, ( req, res ) => {
 	res.send( req.user );
 } );
+
+
+//******************************
+app.post( '/users/login', ( req, res ) => {
+	userMail = req.body.email;
+	userPass = req.body.password;
+	// console.log( userMail, userPass );
+
+	User.findByCredentials( userMail, userPass )
+		.then( ( user ) => {
+			return user.generateAuthToken()
+				.then( ( token ) => {
+					res.header( 'x-auth', token )
+						.send( user );
+				} );
+
+			// res.send( user );
+		} )
+		.catch( ( e ) => {
+			res.status( 400 )
+				.send();
+		} );
+
+
+
+} );
+
+// } );
+
+
+// res.status( 400 )
+// 	.send();
+
 
 
 //******************************
